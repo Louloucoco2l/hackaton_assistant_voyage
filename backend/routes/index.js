@@ -1,9 +1,9 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+// API bateau (bateau qui flotte pas)
+router.get('/api/hello', (req, res) => {
+  res.json({ message: 'Hello from the backend!' });
 });
 
 module.exports = router;

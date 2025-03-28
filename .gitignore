@@ -1,0 +1,21 @@
+# Fichiers d'environnement
+.env
+*/.env
+
+# Dépendances
+node_modules/
+*/node_modules/
+
+# Fichiers de build
+/build
+/dist
+*/build
+*/dist
+
+# Logs
+*.log
+npm-debug.log*
+
+# Fichiers système
+.DS_Store
+Thumbs.db
