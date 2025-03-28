@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../frontend/src/app');
+var app = require('../frontend/src/App');
 var debug = require('debug')('hackaton-assistant-voyage:server');
 var http = require('http');
 
