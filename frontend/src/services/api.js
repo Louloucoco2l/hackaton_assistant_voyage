@@ -1,7 +1,6 @@
-// src/services/api.js
 import axios from 'axios';
 
-// Création d'une instance axios avec une URL de base
+// Création d'une instance axios qui utilisera le proxy configuré dans vite.config.js
 const api = axios.create({
   baseURL: '/api',
   timeout: 10000,
@@ -14,7 +13,7 @@ const api = axios.create({
 export const weatherService = {
   getWeather: async (city) => {
     try {
-      const response = await api.get(`/weather?city=${city}`);
+      const response = await api.get(`/weather/${city}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des données météo:', error);

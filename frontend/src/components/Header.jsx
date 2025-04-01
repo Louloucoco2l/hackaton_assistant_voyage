@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import AuthModal from './AuthModal';
 
 export default function Header() {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
   return (
     <header className="header">
       <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
@@ -36,14 +40,23 @@ export default function Header() {
                 <a className="nav-link" href="#about">À propos</a>
               </li>
               <li className="nav-item">
-                <a className="btn btn-primary ms-lg-3 mt-2 mt-lg-0" href="#signup">
+                <button
+                  className="btn btn-primary ms-lg-3 mt-2 mt-lg-0"
+                  onClick={() => setIsAuthModalOpen(true)}
+                >
                   S'inscrire
-                </a>
+                </button>
               </li>
             </ul>
           </div>
         </div>
       </nav>
+
+      {/* Modal d'authentification */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </header>
   );
 }

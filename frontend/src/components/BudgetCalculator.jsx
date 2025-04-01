@@ -27,21 +27,11 @@ const BudgetCalculator = () => {
                 className="form-control"
                 id="budget"
                 min="0"
+                step="100"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
               />
             </div>
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="duration" className="form-label">Durée (jours)</label>
-            <input
-              type="number"
-              className="form-control"
-              id="duration"
-              min="1"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-            />
           </div>
         </div>
 

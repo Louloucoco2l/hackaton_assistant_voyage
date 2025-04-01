@@ -7,9 +7,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5000', //port sur lequel tourne le back
         changeOrigin: true,
         secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '') // Supprime le préfixe /api
       }
     }
   }

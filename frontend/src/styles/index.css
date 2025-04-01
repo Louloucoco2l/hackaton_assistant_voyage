@@ -24,10 +24,19 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  /* Supprime ces deux lignes qui causent le problème */
+  /* display: flex; */
+  /* place-items: center; */
+  min-width: 100%; /* Changé de 320px à 100% */
   min-height: 100vh;
+  width: 100%; /* Ajouté pour s'assurer que le body prend toute la largeur */
+  overflow-x: hidden; /* Empêche le défilement horizontal */
+}
+
+/* Ajoute cette règle pour que le conteneur racine prenne toute la largeur */
+#root {
+  width: 100%;
+  max-width: 100%;
 }
 
 h1 {
@@ -57,7 +66,7 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #ffff;
   }
   a:hover {
     color: #747bff;

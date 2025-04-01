@@ -2,6 +2,7 @@
   "name": "travel-assistant-backend",
   "version": "1.0.0",
   "description": "Backend pour l'assistant personnel de voyage",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -13,8 +14,11 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "firebase-admin": "^13.2.0",
     "morgan": "^1.10.0",
-    "pug": "^3.0.3"
+    "node-fetch": "^3.3.2",
+    "pug": "^3.0.3",
+    "react-router-dom": "^7.4.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

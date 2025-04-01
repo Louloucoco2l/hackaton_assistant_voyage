@@ -1,85 +1,94 @@
 import { useState, useEffect } from 'react';
-import { Card, Row, Col } from 'react-bootstrap';
-import { Sun, Cloud, CloudRain, CloudSnow } from 'lucide-react';
+import axios from 'axios';
+import { useDestination } from '../context/DestinationContext';
+import '../styles/WeatherWidget.css';
 
-const WeatherWidget = ({ destination = "Paris" }) => {
-  const [weatherData, setWeatherData] = useState({
-    temperature: 22,
-    condition: 'sunny',
-    humidity: 45,
-    windSpeed: 12,
-    forecast: [
-      { day: 'Lun', temp: 22, condition: 'sunny' },
-      { day: 'Mar', temp: 23, condition: 'sunny' },
-      { day: 'Mer', temp: 20, condition: 'cloudy' },
-      { day: 'Jeu', temp: 18, condition: 'rainy' },
-      { day: 'Ven', temp: 19, condition: 'cloudy' },
-    ],
-  });
+const WeatherWidget = () => {
+  const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const getWeatherIcon = (condition) => {
-    switch (condition) {
-      case 'sunny':
-        return <Sun size={24} className="text-warning" />;
-      case 'cloudy':
-        return <Cloud size={24} className="text-secondary" />;
-      case 'rainy':
-        return <CloudRain size={24} className="text-primary" />;
-      case 'snowy':
-        return <CloudSnow size={24} className="text-info" />;
-      default:
-        return <Sun size={24} className="text-warning" />;
+  // Utiliser le contexte pour accéder à la destination sélectionnée
+  const { selectedDestination } = useDestination();
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`/api/weather/${selectedDestination}`);
+        setWeather(response.data);
+        setError(null);
+      } catch (err) {
+        console.error('Erreur lors de la récupération de la météo:', err);
+        setError('Impossible de charger les données météo');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (selectedDestination) {
+      fetchWeather();
     }
-  };
+  }, [selectedDestination]);
+
+  if (loading) {
+    return (
+      <div className="card shadow-sm h-100">
+        <div className="card-body text-center p-4">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="card shadow-sm h-100">
+        <div className="card-body text-center p-4">
+          <div className="text-danger">
+            <i className="bi bi-exclamation-triangle-fill fs-1"></i>
+            <p className="mt-2">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <Card className="shadow h-100">
-      <Card.Body>
-        <Card.Title>Météo à {destination}</Card.Title>
-        <p className="text-muted mb-4">Prévisions pour votre voyage</p>
+    <div className="card shadow-sm h-100 weather-widget">
+      <div className="card-body p-4">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h5 className="card-title mb-0">Météo à {weather.city}</h5>
+          <span className="badge bg-primary rounded-pill">{Math.round(weather.temperature)}°C</span>
+        </div>
 
-        <div className="d-flex align-items-center mb-4">
-          <div className="me-4">
-            {getWeatherIcon(weatherData.condition)}
-          </div>
-          <div>
-            <div className="h3 mb-0">{weatherData.temperature}°C</div>
-            <small className="text-muted text-capitalize">
-              {weatherData.condition === 'sunny' ? 'Ensoleillé' :
-               weatherData.condition === 'cloudy' ? 'Nuageux' :
-               weatherData.condition === 'rainy' ? 'Pluvieux' : 'Neigeux'}
-            </small>
-          </div>
-          <div className="ms-auto text-end">
-            <div>
-              <small className="text-muted me-1">Humidité :</small>
-              <strong>{weatherData.humidity}%</strong>
+        <div className="text-center my-3">
+          <img
+            src={`http://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+            alt={weather.description}
+            className="weather-icon"
+          />
+          <p className="text-capitalize mb-0">{weather.description}</p>
+        </div>
+
+        <div className="row mt-3">
+          <div className="col-6">
+            <div className="d-flex align-items-center">
+              <i className="bi bi-droplet-fill text-primary me-2"></i>
+              <span>Humidité: {weather.humidity}%</span>
             </div>
-            <div>
-              <small className="text-muted me-1">Vent :</small>
-              <strong>{weatherData.windSpeed} km/h</strong>
+          </div>
+          <div className="col-6">
+            <div className="d-flex align-items-center">
+              <i className="bi bi-wind text-primary me-2"></i>
+              <span>Vent: {weather.windSpeed} km/h</span>
             </div>
           </div>
         </div>
-
-        <Row className="text-center">
-          {weatherData.forecast.map((day, index) => (
-            <Col key={index}>
-              <div className="border rounded p-2 mb-2">
-                <div className="fw-medium">{day.day}</div>
-                <div className="my-1">{getWeatherIcon(day.condition)}</div>
-                <div className="fw-bold">{day.temp}°</div>
-              </div>
-            </Col>
-          ))}
-        </Row>
-
-        <hr />
-        <p className="text-muted small mb-0">
-          Planifiez vos activités en fonction de la météo. TravelSmart vous recommandera les meilleures journées pour chaque activité.
-        </p>
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 };
 
