@@ -207,8 +207,7 @@ const PlannerSection = () => {
                   max="1000"
                   step="50"
                   value={budgetMax || 200}
-                  onChange={(e) => setBudgetMax(e.target.value)}
-                />
+                  onChange={(e) => setBudgetMax(Number(e.target.value))}                />
                 <div className="d-flex justify-content-between">
                   <small>0€</small>
                   <small>500€</small>

@@ -1,18 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const { getWeather } = require('../services/weather');
-const fetch = require('node-fetch');
+const { getWeatherByCity } = require('../services/weather');
+// Utiliser node-fetch de façon compatible avec CommonJS
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-// API bateau (bateau qui flotte pas)
+// API Météo - Ajoutons plus de logs pour le débogage
 router.get('/api/weather', async (req, res) => {
   const city = req.query.city || 'Paris'; // Ville par défaut : Paris
+  console.log(`Requête météo reçue pour la ville: ${city}`);
+
   try {
-    const weather = await getWeather(city);
+    const weather = await getWeatherByCity(city);
+    console.log(`Réponse météo pour ${city}:`, weather);
     res.json(weather);
   } catch (error) {
-    res.status(500).json({ error: 'Erreur lors de la récupération de la météo' });
+    console.error(`Erreur sur /api/weather pour ${city}:`, error.message);
+    res.status(500).json({
+      error: 'Erreur lors de la récupération de la météo',
+      details: error.message
+    });
   }
 });
+
 
 // Endpoint pour récupérer les destinations
 router.get('/api/destinations', async (req, res) => {
@@ -79,4 +88,4 @@ router.get('/api/destinations', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

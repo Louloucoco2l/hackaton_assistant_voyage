@@ -1,6 +1,6 @@
-import { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
-// Créer le contexte
+// Création du contexte avec des valeurs par défaut
 const DestinationContext = createContext({
   selectedDestination: '',
   setSelectedDestination: () => {},
@@ -9,17 +9,24 @@ const DestinationContext = createContext({
   returnDate: '',
   setReturnDate: () => {}
 });
-// Hook personnalisé pour utiliser le contexte
-export const useDestination = () => useContext(DestinationContext);
 
-// Fournisseur du contexte
-export const DestinationProvider = ({ children }) => {
-  const [selectedDestination, setSelectedDestination] = useState('Paris');
+// Hook personnalisé pour utiliser le contexte
+function useDestination() {
+  const context = useContext(DestinationContext);
+  if (!context) {
+    throw new Error('useDestination doit être utilisé à l\'intérieur d\'un DestinationProvider');
+  }
+  return context;
+}
+
+// Provider du contexte
+function DestinationProvider({ children }) {
+  const [selectedDestination, setSelectedDestination] = useState('');
   const [departureDate, setDepartureDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
 
-  // Valeur à partager dans le contexte
-  const value = {
+  // Création de l'objet de contexte avec les valeurs d'état actuelles
+  const contextValue = {
     selectedDestination,
     setSelectedDestination,
     departureDate,
@@ -29,8 +36,10 @@ export const DestinationProvider = ({ children }) => {
   };
 
   return (
-    <DestinationContext.Provider value={value}>
+    <DestinationContext.Provider value={contextValue}>
       {children}
     </DestinationContext.Provider>
   );
-};
+}
+
+export { DestinationContext, DestinationProvider, useDestination };

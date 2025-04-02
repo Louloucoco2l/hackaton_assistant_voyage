@@ -13,7 +13,7 @@ const api = axios.create({
 export const weatherService = {
   getWeather: async (city) => {
     try {
-      const response = await api.get(`/weather/${city}`);
+      const response = await api.get(`/weather?city=${city}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des données météo:', error);

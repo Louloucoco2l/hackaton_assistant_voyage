@@ -11,31 +11,35 @@ import DestinationCardList from './components/DestinationCardList';
 import AboutSection from './components/AboutSection';
 import Footer from './components/Footer';
 
+import { DestinationProvider } from './context/DestinationContext';
+
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   return (
     <ErrorBoundary>
-      <div className="min-vh-100 bg-light d-flex flex-column">
-        <Header />
-        <Accueil />
-        <PlannerSection />
-        <section className="py-5">
-          <div className="container">
-            <div className="row g-4">
-              <div className="col-md-6">
-                <WeatherWidget />
-              </div>
-              <div className="col-md-6">
-                <BudgetCalculator />
+      <DestinationProvider>
+        <div className="min-vh-100 bg-light d-flex flex-column">
+          <Header />
+          <Accueil />
+          <PlannerSection />
+          <section className="py-5">
+            <div className="container">
+              <div className="row g-4">
+                <div className="col-md-6">
+                  <WeatherWidget />
+                </div>
+                <div className="col-md-6">
+                  <BudgetCalculator />
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-        <DestinationCardList />
-        <AboutSection />
-        <Footer />
-      </div>
+          </section>
+          <DestinationCardList />
+          <AboutSection />
+          <Footer />
+        </div>
+      </DestinationProvider>
     </ErrorBoundary>
   );
 }
