@@ -11,9 +11,9 @@ const api = axios.create({
 
 // Service pour la météo
 export const weatherService = {
-  getWeather: async (city) => {
+  getWeather: async (city = 'Paris') => {
     try {
-      const response = await api.get(`/weather?city=${city}`);
+      const response = await api.get(`/weather/${encodeURIComponent(city)}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des données météo:', error);

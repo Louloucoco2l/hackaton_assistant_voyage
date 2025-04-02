@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { weatherService } from '../services/api';
+import { useDestination } from '../context/DestinationContext';
+import '../styles/WeatherWidget.css';
 
 const WeatherWidget = () => {
-  const [city, setCity] = useState('Paris');
   const [weather, setWeather] = useState(null);
+  const [forecasts, setForecasts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Utilisation du contexte pour récupérer la destination sélectionnée
+  const { selectedDestination } = useDestination();
+
+  // Ville par défaut si aucune n'est sélectionnée
+  const city = selectedDestination || 'Paris';
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -13,17 +21,13 @@ const WeatherWidget = () => {
         setLoading(true);
         setError(null);
 
-        // Notez le changement ici: passage du paramètre dans l'URL
-        const response = await axios.get(`/api/weather/${city}`);
+        const response = await weatherService.getWeather(city);
 
-        // Prendre seulement les informations météo actuelles
-        setWeather({
-          temperature: response.data.current.temperature,
-          description: response.data.current.description,
-          icon: response.data.current.icon,
-          humidity: response.data.current.humidity,
-          windSpeed: response.data.current.windSpeed
-        });
+        // Définir les données météo actuelles
+        setWeather(response.current);
+
+        // Définir les prévisions
+        setForecasts(response.forecasts);
 
         setLoading(false);
       } catch (err) {
@@ -34,10 +38,12 @@ const WeatherWidget = () => {
     };
 
     fetchWeather();
-  }, [city]);
+  }, [city]); // Recalcul lorsque la ville change
 
-  const handleCityChange = (e) => {
-    setCity(e.target.value);
+  // Fonction pour formater la date
+  const formatDate = (dateStr) => {
+    const options = { weekday: 'short', day: 'numeric', month: 'short' };
+    return new Date(dateStr).toLocaleDateString('fr-FR', options);
   };
 
   return (
@@ -45,12 +51,7 @@ const WeatherWidget = () => {
       <div className="card-body p-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="card-title mb-0">
-            Météo à <select value={city} onChange={handleCityChange} className="form-select-sm d-inline-block w-auto">
-              <option value="Paris">Paris</option>
-              <option value="Lyon">Lyon</option>
-              <option value="Marseille">Marseille</option>
-              <option value="Bordeaux">Bordeaux</option>
-            </select>
+            Météo à {city}
           </h5>
         </div>
 
@@ -60,6 +61,7 @@ const WeatherWidget = () => {
 
         {!loading && !error && weather && (
           <>
+            {/* Météo actuelle */}
             <div className="text-center my-3">
               <div className="d-flex justify-content-center align-items-center">
                 <span className="badge bg-primary rounded-pill fs-5">
@@ -74,7 +76,7 @@ const WeatherWidget = () => {
               <p className="text-capitalize mb-0">{weather.description}</p>
             </div>
 
-            <div className="row mt-3">
+            <div className="row mt-3 mb-4">
               <div className="col-6">
                 <div className="d-flex align-items-center">
                   <i className="bi bi-droplet-fill text-primary me-2"></i>
@@ -88,6 +90,26 @@ const WeatherWidget = () => {
                 </div>
               </div>
             </div>
+
+            {/* Prévisions sur 5 jours */}
+            {forecasts.length > 0 && (
+              <>
+                <h6 className="mt-3 mb-3">Prévisions sur 5 jours</h6>
+                <div className="d-flex justify-content-between forecast-container">
+                  {forecasts.map((forecast, index) => (
+                    <div key={index} className="text-center forecast-day">
+                      <div className="forecast-date">{formatDate(forecast.date)}</div>
+                      <img
+                        src={`https://openweathermap.org/img/wn/${forecast.icon}.png`}
+                        alt={forecast.description}
+                        className="forecast-icon"
+                      />
+                      <div className="forecast-temp">{Math.round(forecast.temperature)}°C</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

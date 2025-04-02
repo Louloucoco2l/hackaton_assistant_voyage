@@ -1,65 +1,36 @@
 .weather-widget {
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .weather-widget:hover {
-  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
-.weather-icon-large {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
+.weather-icon {
+  width: 64px;
+  height: 64px;
 }
 
 .forecast-container {
-  display: flex;
-  justify-content: space-between;
   overflow-x: auto;
-  padding-bottom: 10px;
+  gap: 10px;
 }
 
 .forecast-day {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 70px;
-  padding: 10px;
-  border-radius: 8px;
-  background-color: rgba(0, 123, 255, 0.05);
-  margin-right: 8px;
+  flex: 0 0 auto;
+  min-width: 60px;
 }
 
-.forecast-day:last-child {
-  margin-right: 0;
+.forecast-icon {
+  width: 36px;
+  height: 36px;
 }
 
 .forecast-date {
   font-size: 0.8rem;
-  margin-bottom: 5px;
-  text-align: center;
-}
-
-.forecast-emoji {
-  font-size: 1.5rem;
-  margin-bottom: 5px;
+  color: #6c757d;
 }
 
 .forecast-temp {
-  font-weight: bold;
-}
-
-/* Pour les petits écrans */
-@media (max-width: 576px) {
-  .forecast-container {
-    justify-content: flex-start;
-  }
-
-  .forecast-day {
-    min-width: 60px;
-    padding: 8px;
-  }
-
-  .forecast-emoji {
-    font-size: 1.2rem;
-  }
+  font-weight: 500;
 }

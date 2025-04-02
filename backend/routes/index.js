@@ -4,6 +4,28 @@ const { getWeatherByCity } = require('../services/weather');
 // Utiliser node-fetch de façon compatible avec CommonJS
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
+
+router.get('/api/weather/:city', async (req, res) => {
+  const { city } = req.params;
+  console.log(`Requête météo reçue pour la ville: ${city}`);
+
+  try {
+    const currentWeather = await getWeatherByCity(city);
+    const forecasts = await getForecastByCity(city);
+
+    res.json({
+      current: currentWeather,
+      forecasts: forecasts
+    });
+  } catch (error) {
+    console.error(`Erreur sur /api/weather pour ${city}:`, error.message);
+    res.status(500).json({
+      error: 'Erreur lors de la récupération de la météo',
+      details: error.message
+    });
+  }
+});
+
 // API Météo - Ajoutons plus de logs pour le débogage
 router.get('/api/weather', async (req, res) => {
   const city = req.query.city || 'Paris'; // Ville par défaut : Paris

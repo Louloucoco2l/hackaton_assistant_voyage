@@ -17,9 +17,13 @@ const PlannerSection = () => {
   } = useDestination();
 
   const handleSearch = () => {
-    // Mettre à jour la destination et les dates sélectionnées
+    // Mise à jour du contexte pour informer les autres composants
+    // notamment le widget météo
     if (destination) {
       setSelectedDestination(destination);
+
+      // Faire défiler jusqu'à la section météo pour voir les résultats
+      document.querySelector('.weather-widget')?.scrollIntoView({ behavior: 'smooth' });
     }
 
     if (dateDepart) {
@@ -38,9 +42,6 @@ const PlannerSection = () => {
       console.log('Recherche d\'hébergement pour:', { destination, dateDepart, dateRetour, voyageurs });
       // Intégration API hôtel ici
     }
-
-    // Faire défiler jusqu'à la section météo
-    document.querySelector('.weather-widget')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const [budgetMax, setBudgetMax] = useState(200);
@@ -59,8 +60,6 @@ const PlannerSection = () => {
         </div>
 
         <div className="bg-white rounded shadow p-4 mb-5">
-
-
           {/* Formulaire commun */}
           <div className="row g-3">
             <div className="col-md-6 col-lg-3">
@@ -77,6 +76,7 @@ const PlannerSection = () => {
                   onChange={(e) => setDestination(e.target.value)}
                 />
               </div>
+              <small className="text-muted">Saisissez une ville pour voir sa météo</small>
             </div>
 
             <div className="col-md-6 col-lg-3">
@@ -207,7 +207,8 @@ const PlannerSection = () => {
                   max="1000"
                   step="50"
                   value={budgetMax || 200}
-                  onChange={(e) => setBudgetMax(Number(e.target.value))}                />
+                  onChange={(e) => setBudgetMax(Number(e.target.value))}
+                />
                 <div className="d-flex justify-content-between">
                   <small>0€</small>
                   <small>500€</small>
@@ -221,17 +222,12 @@ const PlannerSection = () => {
             <button
               className="btn btn-primary px-4 py-2"
               onClick={handleSearch}
-              disabled={!destination || !dateDepart || !dateRetour || !voyageurs}
+              disabled={!destination}
             >
               <Search size={16} className="me-2" />
               Rechercher
             </button>
           </div>
-        </div>
-
-        {/* Espace pour afficher les résultats de recherche */}
-        <div id="search-results" className="mt-4">
-          {/* Les résultats de l'API seront affichés ici */}
         </div>
       </div>
     </section>

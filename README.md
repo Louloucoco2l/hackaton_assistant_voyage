@@ -102,7 +102,8 @@ hackaton_assistant_voyage/
 │   │   └── users.js
 │   ├── services/
 │   │   ├── weather.js
-│   │   └── database.js
+│   │   ├── db.js
+│   │   └── firebase.js
 │   ├── .env
 │   ├── package.json
 │   └── server.js
@@ -111,12 +112,32 @@ hackaton_assistant_voyage/
 │   ├── public/
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── AboutSection.jsx
+│   │   │   ├── Accueil.jsx
+│   │   │   ├── AuthModal.jsx
+│   │   │   ├── BudgetCalculator.jsx
+│   │   │   ├── DestinationCard.jsx
+│   │   │   ├── DestinationCardList.jsx
+│   │   │   ├── ErrorBoundary.jsx
+│   │   │   ├── FlightSearch.jsx
+│   │   │   ├── Footer.jsx
 │   │   │   ├── Header.jsx
+│   │   │   ├── HotelSearch.jsx
+│   │   │   ├── PlannerSection.jsx
 │   │   │   └── WeatherWidget.jsx
 │   │   ├── pages/
-│   │   │   └── Home.jsx
+│   │   │   ├── Auth.jsx
+│   │   │   └── Search.jsx
 │   │   ├── services/
-│   │   │   └── api.js
+│   │   │   ├── api.js
+│   │   │   ├── auth.jsx
+│   │   │   └── firebase.jsx
+│   │   ├── styles/
+│   │   │   ├── App.css
+│   │   │   ├── Destinationcards.css
+│   │   │   ├── index.css
+│   │   │   ├── style.css
+│   │   │   └── WeatherWidget.css
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   ├── .env
