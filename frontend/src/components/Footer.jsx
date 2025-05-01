@@ -2,8 +2,8 @@ import { Facebook, Twitter, Instagram } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-top pt-5 pb-4 mt-auto">
-      <div className="container">
+    <footer className="planner-bg border-top pt-5 pb-4 mt-auto">
+     <div className="container footer-style">
         <div className="row align-items-center mb-4">
           <div className="col-md-6">
             <h5 className="fw-bold text-primary mb-1">TravelSmart</h5>
@@ -14,28 +14,28 @@ const Footer = () => {
           </div>
 
           <div className="col-md-6 text-md-end mt-4 mt-md-0">
-            <a href="#" className="text-muted me-3">
+            <a href="#" className="text-dark me-3">
               <Facebook size={18} />
             </a>
-            <a href="#" className="text-muted me-3">
+            <a href="#" className="text-dark me-3">
               <Twitter size={18} />
             </a>
-            <a href="#" className="text-muted">
+            <a href="#" className="text-dark">
               <Instagram size={18} />
             </a>
           </div>
         </div>
 
-        <hr />
+        <hr className="border-dark" />
 
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center text-muted small">
           <div className="mb-2 mb-md-0">
-            © 2025 TravelSmart. Tous droits réservés.
+            © 2023 TravelSmart. Tous droits réservés.
           </div>
           <div>
-            <a href="#" className="text-muted me-3">Conditions d'utilisation</a>
-            <a href="#" className="text-muted me-3">Politique de confidentialité</a>
-            <a href="#" className="text-muted">Contact</a>
+            <a href="#" className="text-dark me-3">Conditions d'utilisation</a>
+            <a href="#" className="text-dark me-3">Politique de confidentialité</a>
+            <a href="#" className="text-dark">Contact</a>
           </div>
         </div>
       </div>

@@ -1,6 +1,4 @@
-# Fichiers d'environnement
-.env
-*/.env
+
 
 # Dépendances
 node_modules/

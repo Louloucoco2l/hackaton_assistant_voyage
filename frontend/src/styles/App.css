@@ -10,3 +10,105 @@
 div[style*="animation: bounce"] {
   animation: bounce 2s infinite;
 }
+
+body {
+  background-color: #f8f9fa !important; /* même que bg-light */
+}
+
+.accueil-hero {
+  background-image: url('/bg-travel.png'); /* ou /A_seamless_digital_vector_pattern_on_a_light_blue_.png */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  width: 100%;
+}
+
+.planner-bg {
+  background-image: url('/bg-travel2.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* optionnel pour effet parallaxe */
+}
+
+
+.accueil-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(214, 197, 197, 0.8); /* voile clair */
+  z-index: 0;
+}
+.accueil-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.footer-style * {
+  font-style: italic !important;
+  color: #000 !important;
+}
+
+
+.chat-badge {
+  white-space: pre-wrap;
+  display: inline-block;
+  max-width: 90%;
+  text-align: left;
+}
+
+
+/*--------------------------------------*/
+
+.floating-chatbot-wrapper {
+  position: absolute; /*  PAS fixed */
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+
+.bot-icon {
+  background-color: #0d6efd;
+  padding: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 1.5s infinite;
+}
+
+.chatbot-bubble {
+  background-color: #ffffff;
+  color: #000;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-left: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-size: 14px;
+  max-width: 200px;
+}
+
+.animate-in {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

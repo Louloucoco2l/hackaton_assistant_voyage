@@ -1,106 +1,70 @@
-const axios = require('axios');
-require('dotenv').config();
+import axios from 'axios';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const API_KEY = process.env.OPENWEATHER_API_KEY;
 
-const getWeatherByCity = async (cityName) => {
+export const getForecastByCity = async (cityName) => {
   try {
-    console.log(`Recherche de la météo pour ${cityName} avec la clé API: ${API_KEY.substring(0, 3)}...`);
+    if (!API_KEY) {
+      throw new Error('Clé API OpenWeather manquante');
+    }
 
-    // Étape 1: Géocodage pour obtenir lat/lon
+    // 1. Géocodage
     const geoResponse = await axios.get(
       `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(cityName)}&limit=1&appid=${API_KEY}`
     );
 
     if (!geoResponse.data || geoResponse.data.length === 0) {
-      console.log(`Aucune donnée géographique trouvée pour: ${cityName}`);
-      return {
-        city: cityName,
-        temperature: 0,
-        description: "Information non disponible",
-        icon: "01d",
-        humidity: 0,
-        windSpeed: 0,
-        date: new Date().toISOString().split('T')[0]
-      };
+      throw new Error(`Ville non trouvée: ${cityName}`);
     }
 
     const { lat, lon } = geoResponse.data[0];
 
-    // Étape 2: Obtenir les données météo avec lat/lon
-    const weatherResponse = await axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${API_KEY}`
-    );
-
-    return {
-      city: cityName,
-      temperature: weatherResponse.data.main.temp,
-      description: weatherResponse.data.weather[0].description,
-      icon: weatherResponse.data.weather[0].icon,
-      humidity: weatherResponse.data.main.humidity,
-      windSpeed: weatherResponse.data.wind.speed,
-      date: new Date(weatherResponse.data.dt * 1000).toISOString().split('T')[0]
-    };
-  } catch (error) {
-    console.error(`Erreur lors de la récupération de la météo pour ${cityName}:`, error.message);
-    return {
-      city: cityName,
-      temperature: 0,
-      description: "Erreur de chargement",
-      icon: "01d",
-      humidity: 0,
-      windSpeed: 0,
-      date: new Date().toISOString().split('T')[0]
-    };
-  }
-};
-
-const getForecastByCity = async (cityName) => {
-  try {
-    // Étape 1: Géocodage pour obtenir lat/lon
-    const geoResponse = await axios.get(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(cityName)}&limit=1&appid=${API_KEY}`
-    );
-
-    if (!geoResponse.data || geoResponse.data.length === 0) {
-      return []; // Retourne un tableau vide en cas d'erreur
-    }
-
-    const { lat, lon } = geoResponse.data[0];
-
-    // Étape 2: Obtenir les prévisions
+    // 2. Prévisions météo
     const forecastResponse = await axios.get(
       `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${API_KEY}`
     );
 
-    // Traitement des prévisions pour n'avoir qu'une par jour
     const dailyForecasts = [];
     const processedDates = new Set();
-    const currentDate = new Date().toISOString().split('T')[0];
 
+    // Traitement des données de prévision
     forecastResponse.data.list.forEach(forecast => {
       const date = new Date(forecast.dt * 1000).toISOString().split('T')[0];
 
-      // Ne prendre qu'une prévision par jour et pas celle d'aujourd'hui
-      if (!processedDates.has(date) && date !== currentDate) {
+      if (!processedDates.has(date)) {
         processedDates.add(date);
+
+        // Vérification de l'existence des propriétés
+        const temperature = forecast.main?.temp ?? 0;
+        const condition = forecast.weather?.[0]?.main ?? 'Unknown';
+        const description = forecast.weather?.[0]?.description ?? 'Description non disponible';
+        const humidity = forecast.main?.humidity ?? 0;
+        const windSpeed = forecast.wind?.speed ?? 0;
+
         dailyForecasts.push({
           date,
-          temperature: forecast.main.temp,
-          description: forecast.weather[0].description,
-          icon: forecast.weather[0].icon,
-          humidity: forecast.main.humidity,
-          windSpeed: forecast.wind.speed
+          temperature: Math.round(temperature),
+          condition,
+          description,
+          humidity,
+          windSpeed: Math.round(windSpeed)
         });
       }
     });
 
-    // Limiter à 5 jours maximum
     return dailyForecasts.slice(0, 5);
+
   } catch (error) {
-    console.error(`Erreur lors de la récupération des prévisions pour ${cityName}:`, error);
-    return []; // Retourne un tableau vide en cas d'erreur
+    console.error('Erreur dans getForecastByCity:', error);
+    if (error.response) {
+      console.error('Détails de l\'erreur API:', {
+        status: error.response.status,
+        data: error.response.data
+      });
+    }
+    throw error;
   }
 };
-
-module.exports = { getWeatherByCity, getForecastByCity };

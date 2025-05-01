@@ -1,53 +1,63 @@
 import { useState } from 'react';
 import { Search, Calendar, MapPin, Plane, Hotel, Users } from 'lucide-react';
-import { useDestination } from '../context/DestinationContext';
+import { useTravel } from '../context/TravelContext';
+import WeatherWidget from './WeatherWidget';
+import { useNavigate, createSearchParams } from 'react-router-dom';
 
 const PlannerSection = () => {
-  const [destination, setDestination] = useState('');
-  const [dateDepart, setDateDepart] = useState('');
-  const [dateRetour, setDateRetour] = useState('');
-  const [voyageurs, setVoyageurs] = useState('');
-  const [activeTab, setActiveTab] = useState('vols'); // 'vols' ou 'hebergement'
-
-  // Utiliser le contexte pour accéder aux fonctions de mise à jour
   const {
-    setSelectedDestination,
-    setDepartureDate,
-    setReturnDate
-  } = useDestination();
+    destination, setDestination,
+    dateDepart, setDateDepart,
+    dateRetour, setDateRetour,
+    voyageurs, setVoyageurs
+  } = useTravel();
+
+  const [villeDepart, setVilleDepart] = useState('');
+  const [activeTab, setActiveTab] = useState('vols');
+  const [budgetMax, setBudgetMax] = useState(200);
+  const [showChildren, setShowChildren] = useState(false);
+  const [nombreEnfants, setNombreEnfants] = useState(0);
+  const [allerRetour, setAllerRetour] = useState(true);
+
+  const navigate = useNavigate();
 
   const handleSearch = () => {
-    // Mise à jour du contexte pour informer les autres composants
-    // notamment le widget météo
-    if (destination) {
-      setSelectedDestination(destination);
+    if (!destination || !villeDepart || !dateDepart) return;
 
-      // Faire défiler jusqu'à la section météo pour voir les résultats
-      document.querySelector('.weather-widget')?.scrollIntoView({ behavior: 'smooth' });
-    }
+    const infosRecherche = {
+      villeDepart,
+      destination,
+      dateDepart,
+      dateRetour: allerRetour ? dateRetour : null,
+      voyageurs,
+      enfants: showChildren ? nombreEnfants : 0,
+      allerRetour,
+      budget: budgetMax
+    };
 
-    if (dateDepart) {
-      setDepartureDate(dateDepart);
-    }
+    console.log(
+      activeTab === 'vols' ? 'Recherche de vols :' : 'Recherche d’hébergements :',
+      infosRecherche
+    );
 
-    if (dateRetour) {
-      setReturnDate(dateRetour);
-    }
+    navigate({
+      pathname: activeTab === 'vols' ? '/vols' : '/hotels',
+      search: createSearchParams({
+        origin: villeDepart,
+        destination,
+        dateDepart,
+        dateRetour: allerRetour ? dateRetour : '',
+        voyageurs,
+        enfants: showChildren ? nombreEnfants : 0,
+        allerRetour,
+        budget: budgetMax
+      }).toString()
+    });
 
-    // Logique de recherche selon l'onglet actif
-    if (activeTab === 'vols') {
-      console.log('Recherche de vols pour:', { destination, dateDepart, dateRetour, voyageurs });
-      // Intégration API vols ici
-    } else {
-      console.log('Recherche d\'hébergement pour:', { destination, dateDepart, dateRetour, voyageurs });
-      // Intégration API hôtel ici
-    }
+    document.querySelector('.weather-widget')?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  const [budgetMax, setBudgetMax] = useState(200);
-
   return (
-    <section id="planner" className="py-5 px-3 bg-light">
+    <section id="plan" className="py-5 px-3 planner-bg">
       <div className="container">
         <div className="text-center mb-5">
           <span className="badge bg-primary bg-opacity-10 text-primary fw-semibold mb-3 px-3 py-2 rounded-pill">
@@ -60,14 +70,25 @@ const PlannerSection = () => {
         </div>
 
         <div className="bg-white rounded shadow p-4 mb-5">
-          {/* Formulaire commun */}
           <div className="row g-3">
+            <div className="col-md-6 col-lg-3">
+              <label className="form-label">Ville de départ</label>
+              <div className="input-group">
+                <span className="input-group-text"><MapPin size={16} /></span>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="D'où partez-vous ?"
+                  value={villeDepart}
+                  onChange={(e) => setVilleDepart(e.target.value)}
+                />
+              </div>
+            </div>
+
             <div className="col-md-6 col-lg-3">
               <label className="form-label">Destination</label>
               <div className="input-group">
-                <span className="input-group-text">
-                  <MapPin size={16} />
-                </span>
+                <span className="input-group-text"><MapPin size={16} /></span>
                 <input
                   type="text"
                   className="form-control"
@@ -82,9 +103,7 @@ const PlannerSection = () => {
             <div className="col-md-6 col-lg-3">
               <label className="form-label">Date de départ</label>
               <div className="input-group">
-                <span className="input-group-text">
-                  <Calendar size={16} />
-                </span>
+                <span className="input-group-text"><Calendar size={16} /></span>
                 <input
                   type="date"
                   className="form-control"
@@ -97,14 +116,13 @@ const PlannerSection = () => {
             <div className="col-md-6 col-lg-3">
               <label className="form-label">Date de retour</label>
               <div className="input-group">
-                <span className="input-group-text">
-                  <Calendar size={16} />
-                </span>
+                <span className="input-group-text"><Calendar size={16} /></span>
                 <input
                   type="date"
                   className="form-control"
                   value={dateRetour}
                   onChange={(e) => setDateRetour(e.target.value)}
+                  disabled={!allerRetour}
                 />
               </div>
             </div>
@@ -112,9 +130,7 @@ const PlannerSection = () => {
             <div className="col-md-6 col-lg-3">
               <label className="form-label">Voyageurs</label>
               <div className="input-group">
-                <span className="input-group-text">
-                  <Users size={16} />
-                </span>
+                <span className="input-group-text"><Users size={16} /></span>
                 <input
                   type="number"
                   min="1"
@@ -124,12 +140,36 @@ const PlannerSection = () => {
                   onChange={(e) => setVoyageurs(e.target.value)}
                 />
               </div>
+
+              <div className="form-check mt-2">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="includeChildren"
+                  checked={showChildren}
+                  onChange={() => setShowChildren(!showChildren)}
+                />
+                <label className="form-check-label" htmlFor="includeChildren">
+                  Inclure des enfants
+                </label>
+              </div>
+
+              {showChildren && (
+                <div className="mt-2">
+                  <label className="form-label">Nombre d'enfants</label>
+                  <input
+                    type="number"
+                    min="0"
+                    className="form-control"
+                    value={nombreEnfants}
+                    onChange={(e) => setNombreEnfants(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
-          <br/>
 
-          {/* Onglets Vols/Hébergement */}
-          <div className="row g-2 mb-4 text-center">
+          <div className="row g-2 mb-4 text-center mt-4">
             <div className="col-6">
               <button
                 className={`btn ${activeTab === 'vols' ? 'btn-primary' : 'btn-outline-primary'} w-100`}
@@ -150,29 +190,31 @@ const PlannerSection = () => {
             </div>
           </div>
 
-          {/* Options spécifiques à l'onglet Vols */}
           {activeTab === 'vols' && (
             <div className="row g-3 mt-2">
               <div className="col-md-6">
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" id="allerRetour" defaultChecked />
-                  <label className="form-check-label" htmlFor="allerRetour">
-                    Aller-retour
-                  </label>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="allerRetour"
+                    checked={allerRetour}
+                    onChange={() => setAllerRetour(!allerRetour)}
+                  />
+                  <label className="form-check-label" htmlFor="allerRetour">Aller-retour</label>
                 </div>
               </div>
               <div className="col-md-6">
                 <div className="form-check">
                   <input className="form-check-input" type="checkbox" id="directOnly" />
-                  <label className="form-check-label" htmlFor="directOnly">
-                    Vols directs uniquement
-                  </label>
+                  <label className="form-check-label" htmlFor="directOnly">Vols directs uniquement</label>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Options spécifiques à l'onglet Hébergement */}
+          <WeatherWidget destination={destination} />
+
           {activeTab === 'hebergement' && (
             <div className="row g-3 mt-2">
               <div className="col-md-4">
@@ -197,20 +239,18 @@ const PlannerSection = () => {
               </div>
               <div className="col-md-4">
                 <label className="form-label">Budget max/nuit</label>
-                <div className="mb-2 text-center fw-bold text-primary">
-                  {budgetMax || 200}€
-                </div>
+                <div className="mb-2 text-center fw-bold text-primary">{budgetMax || 200}€</div>
                 <input
                   type="range"
                   className="form-range"
-                  min="0"
+                  min="50"
                   max="1000"
                   step="50"
                   value={budgetMax || 200}
                   onChange={(e) => setBudgetMax(Number(e.target.value))}
                 />
                 <div className="d-flex justify-content-between">
-                  <small>0€</small>
+                  <small>50€</small>
                   <small>500€</small>
                   <small>1000€</small>
                 </div>

@@ -93,6 +93,10 @@ Le projet est structuré en deux parties principales :
 ```
 hackaton_assistant_voyage/
 ├── backend/
+│   ├── controllers/
+│   │   ├── UserController.js
+│   ├── middleware/
+│   │   ├── auth.js
 │   ├── node_modules/
 │   ├── public/
 │   │   ├── images/
@@ -125,6 +129,8 @@ hackaton_assistant_voyage/
 │   │   │   ├── HotelSearch.jsx
 │   │   │   ├── PlannerSection.jsx
 │   │   │   └── WeatherWidget.jsx
+│   │   ├── context/
+│   │   │   ├── DestinationContext.jsx
 │   │   ├── pages/
 │   │   │   ├── Auth.jsx
 │   │   │   └── Search.jsx
@@ -145,6 +151,39 @@ hackaton_assistant_voyage/
 │   └── vite.config.js
 └── .gitignore
 ```
+backend/package-lock.json
+backend/package.json
+backend/server.js
+backend/services/amadeusService.js
+backend/services/db.js
+backend/services/firebase.js
+backend/services/weather.js
+backend/structure_projet.txt
+frontend/index.html
+frontend/package-lock.json
+frontend/package.json
+frontend/src/App.jsx
+frontend/src/components/AboutSection.jsx
+frontend/src/components/Accueil.jsx
+frontend/src/components/AuthModal.jsx
+frontend/src/components/ChatAssistant.jsx
+frontend/src/components/DestinationCard.jsx
+frontend/src/components/DestinationCardList.jsx
+frontend/src/components/FloatingChatBot.jsx
+frontend/src/components/Footer.jsx
+frontend/src/components/Header.jsx
+frontend/src/components/HotelSearch.jsx
+frontend/src/components/PlannerSection.jsx
+frontend/src/components/TravelTipsCard.jsx
+frontend/src/components/WeatherWidget.jsx
+frontend/src/context/TravelContext.jsx
+frontend/src/FlightResultsPage.jsx
+frontend/src/Main.jsx
+frontend/src/pages/FlightResults.jsx
+frontend/src/services/api.js
+frontend/src/styles/App.css
+frontend/src/styles/index.css
+frontend/vite.config.js
 
 ## 🔧 Technologies Utilisées
 
@@ -155,7 +194,7 @@ hackaton_assistant_voyage/
 - Axios
 
 ### Backend
-- Node.js
+- Node.js avec ES modules
 - Express
 - MySQL2
 - Dotenv
@@ -163,7 +202,8 @@ hackaton_assistant_voyage/
 
 ### API Externes
 - OpenWeather API
-- (Données simulées pour Skyscanner et Booking)
+- amadeus pour les vols et hôtels
+- firebase (pas encore implemente)
 
 ## 🧪 Tests
 

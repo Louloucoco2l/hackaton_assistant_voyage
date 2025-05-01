@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function AuthModal({ isOpen, onClose }) {
+export default function AuthModal({ isOpen, onClose, onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,22 +21,23 @@ export default function AuthModal({ isOpen, onClose }) {
       setLoading(true);
 
       if (isLogin) {
-        // Simulation de connexion, à remplacer par  service d'authentification
+        // Simulation de connexion, à remplacer par service d'authentification
         console.log('Connexion avec:', { email, password });
         // await authService.login(email, password);
-        onClose(); // Ferme le modal après connexion
+        onLogin(); // Signale au parent que l'utilisateur est connecté
+        onClose();
       } else {
-        // Simulation d'inscription, à remplacer par  service d'authentification
+        // Simulation d'inscription, à remplacer par service d'authentification
         console.log('Inscription avec:', { email, password, name });
         // await authService.register(email, password, name);
-        setIsLogin(true); // Basculer vers le formulaire de connexion après inscription
+        setIsLogin(true);
         setError('');
         setPassword('');
       }
     } catch (err) {
       setError(isLogin
         ? 'Échec de la connexion. Vérifiez vos identifiants.'
-        : 'Échec de l\'inscription. Cet email est peut-être déjà utilisé.'
+        : 'Échec de linscription. Cet email est peut-être déjà utilisé.'
       );
       console.error(err);
     } finally {
@@ -107,7 +108,7 @@ export default function AuthModal({ isOpen, onClose }) {
                 >
                   {loading
                     ? (isLogin ? 'Connexion...' : 'Inscription...')
-                    : (isLogin ? 'Se connecter' : 'S\'inscrire')}
+                    : (isLogin ? 'Se connecter' : "S'inscrire")}
                 </button>
               </div>
 
@@ -121,7 +122,7 @@ export default function AuthModal({ isOpen, onClose }) {
                   }}
                 >
                   {isLogin
-                    ? 'Pas encore de compte ? S\'inscrire'
+                    ? "Pas encore de compte ? S'inscrire"
                     : 'Déjà un compte ? Se connecter'}
                 </button>
               </div>
