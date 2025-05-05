@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { registerUser, loginUser } from '../services/firebase';
 
 export default function AuthModal({ isOpen, onClose, onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -21,25 +22,26 @@ export default function AuthModal({ isOpen, onClose, onLogin }) {
       setLoading(true);
 
       if (isLogin) {
-        // Simulation de connexion, à remplacer par service d'authentification
-        console.log('Connexion avec:', { email, password });
-        // await authService.login(email, password);
-        onLogin(); // Signale au parent que l'utilisateur est connecté
+        await loginUser(email, password);
+        onLogin();
         onClose();
       } else {
-        // Simulation d'inscription, à remplacer par service d'authentification
-        console.log('Inscription avec:', { email, password, name });
-        // await authService.register(email, password, name);
+        await registerUser(email, password, name);
         setIsLogin(true);
-        setError('');
+        setError('Inscription réussie ! Vous pouvez maintenant vous connecter.');
         setPassword('');
       }
     } catch (err) {
-      setError(isLogin
-        ? 'Échec de la connexion. Vérifiez vos identifiants.'
-        : 'Échec de linscription. Cet email est peut-être déjà utilisé.'
+      console.error('Erreur auth:', err);
+      setError(
+        err.code === 'auth/email-already-in-use'
+          ? 'Cet email est déjà utilisé'
+          : err.code === 'auth/invalid-email'
+          ? 'Email invalide'
+          : err.code === 'auth/weak-password'
+          ? 'Le mot de passe doit contenir au moins 6 caractères'
+          : 'Une erreur est survenue'
       );
-      console.error(err);
     } finally {
       setLoading(false);
     }

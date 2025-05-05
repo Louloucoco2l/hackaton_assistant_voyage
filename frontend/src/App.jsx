@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import { ErrorBoundary } from 'react-error-boundary'; // Ajoutez cet import
+import { ErrorBoundary } from 'react-error-boundary';
 import './styles/App.css';
 
 // Composants

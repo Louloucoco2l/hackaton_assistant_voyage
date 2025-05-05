@@ -1,29 +1,28 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { Link } from 'react-router-dom';
 import { User } from 'lucide-react';
 import AuthModal from './AuthModal';
+import { useAuth } from '../context/AuthContext';
+import { logoutUser } from '../services/firebase';
 
 export default function Header() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const { user } = useAuth() || {}; // Ajout d'une valeur par défaut pour éviter l'erreur de destructuration
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setShowDropdown(false);
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      setShowDropdown(false);
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
   };
 
   return (
     <header className="header">
       <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div className="container-fluid">
-          {/* Utilisation de Link pour la navigation React Router */}
           <Link className="navbar-brand fw-bold text-primary" to="/">
             TravelSmart
           </Link>
@@ -42,20 +41,19 @@ export default function Header() {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                {/* Liens ancres pour le défilement dans la même page */}
-                <a className="nav-link" href="#features">Fonctionnalités</a>
+                <Link className="nav-link" to="/#features">Fonctionnalités</Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#plan">Planifier</a>
+                <Link className="nav-link" to="/#plan">Planifier</Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#destinations">Destinations</a>
+                <Link className="nav-link" to="/#destinations">Destinations</Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#about">À propos</a>
+                <Link className="nav-link" to="/#about">À propos</Link>
               </li>
 
-              {!isAuthenticated ? (
+              {!user ? (
                 <li className="nav-item">
                   <button
                     className="btn btn-primary ms-lg-3 mt-2 mt-lg-0"
@@ -71,11 +69,10 @@ export default function Header() {
                     onClick={() => setShowDropdown(!showDropdown)}
                   >
                     <User size={18} className="me-1" />
-                    Mon compte
+                    {user.displayName || 'Mon compte'}
                   </button>
                   {showDropdown && (
                     <ul className="dropdown-menu show" style={{ right: 0, left: 'auto' }}>
-                      {/* Utilisation de Link pour les routes authentifiées */}
                       <li><Link className="dropdown-item" to="/profile">Mon profil</Link></li>
                       <li><Link className="dropdown-item" to="/reservations">Mes réservations</Link></li>
                       <li><hr className="dropdown-divider" /></li>
@@ -92,7 +89,7 @@ export default function Header() {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onLogin={handleLogin}
+        onLogin={() => setIsAuthModalOpen(false)}
       />
     </header>
   );

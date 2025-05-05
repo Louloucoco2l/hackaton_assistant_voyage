@@ -177,7 +177,6 @@ frontend/src/components/PlannerSection.jsx
 frontend/src/components/TravelTipsCard.jsx
 frontend/src/components/WeatherWidget.jsx
 frontend/src/context/TravelContext.jsx
-frontend/src/FlightResultsPage.jsx
 frontend/src/Main.jsx
 frontend/src/pages/FlightResults.jsx
 frontend/src/services/api.js
