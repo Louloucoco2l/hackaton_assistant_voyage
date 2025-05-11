@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 import querystring from 'querystring';
 
-
 const AMADEUS_BASE_URL = 'https://test.api.amadeus.com/v1';
 const AMADEUS_AUTH_URL = `${AMADEUS_BASE_URL}/security/oauth2/token`;
 const AMADEUS_FLIGHTS_URL = 'https://test.api.amadeus.com/v2/shopping/flight-offers';
@@ -13,11 +12,9 @@ let accessToken = null;
 let tokenExpiration = null;
 
 async function getAccessToken() {
-  // Vérifier si le token existe et est encore valide
   if (accessToken && tokenExpiration && Date.now() < tokenExpiration) {
     return accessToken;
   }
-
 
   const response = await axios.post(
     AMADEUS_AUTH_URL,
@@ -57,35 +54,27 @@ export async function searchAirports(cityName) {
   }));
 }
 
-export async function searchFlights({ origin, destination, date, returnDate, adults = 1, children = 0 }) {
+export async function searchFlights({ origin, destination, date, returnDate, adults = 1, children = 0, travelClass, currency = 'EUR' }) {
   try {
     const token = await getAccessToken();
 
-    // Validation des paramètres obligatoires
     if (!origin || !destination || !date) {
       throw new Error('Paramètres manquants: origin, destination et date sont requis');
     }
 
-    // Construction des paramètres de recherche
     const params = {
       originLocationCode: origin,
       destinationLocationCode: destination,
       departureDate: date,
       adults: parseInt(adults),
-      currencyCode: 'EUR',
+      currencyCode: currency,
       max: 20
     };
 
-    // Ajout des paramètres optionnels
-    if (returnDate) {
-      params.returnDate = returnDate;
-    }
+    if (returnDate) params.returnDate = returnDate;
+    if (children > 0) params.children = parseInt(children);
+    if (travelClass) params.travelClass = travelClass;
 
-    if (children > 0) {
-      params.children = parseInt(children);
-    }
-
-    // Appel API avec gestion des erreurs
     const response = await axios.get(AMADEUS_FLIGHTS_URL, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -94,12 +83,10 @@ export async function searchFlights({ origin, destination, date, returnDate, adu
       params
     });
 
-    // Vérification et transformation des données
     if (!response.data || !response.data.data) {
       throw new Error('Format de réponse invalide');
     }
 
-    // Transformation des données pour le front
     return response.data.data.map(flight => ({
       id: flight.id,
       price: flight.price,
@@ -120,19 +107,16 @@ export async function searchFlights({ origin, destination, date, returnDate, adu
         }))
       }))
     }));
-
   } catch (error) {
     console.error('Erreur recherche vols:', error);
     throw new Error(error.response?.data?.errors?.[0]?.detail || error.message);
   }
 }
 
-// Cache pour les codes IATA
 const airportCache = new Map();
 
 export async function getCityAirport(cityName) {
   try {
-    // Vérifier le cache
     if (airportCache.has(cityName.toLowerCase())) {
       return airportCache.get(cityName.toLowerCase());
     }
@@ -150,5 +134,48 @@ export async function getCityAirport(cityName) {
   } catch (error) {
     console.error(`Erreur lors de la recherche d'aéroport pour ${cityName}:`, error);
     throw error;
+  }
+}
+
+
+const AMADEUS_HOTELS_URL = `${AMADEUS_BASE_URL}/shopping/hotel-offers`;
+
+export async function searchHotels({ cityCode, checkInDate, checkOutDate, adults = 1, rooms = 1 }) {
+  try {
+    const token = await getAccessToken();
+
+    const response = await axios.get(AMADEUS_HOTELS_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      params: {
+        cityCode,
+        checkInDate,
+        checkOutDate,
+        adults,
+        roomQuantity: rooms,
+        bestRateOnly: true,
+        radius: 30,
+        radiusUnit: 'KM'
+      }
+    });
+
+    if (!response.data || !response.data.data) {
+      throw new Error('Réponse invalide pour les offres d’hôtel');
+    }
+
+    return response.data.data.map(offer => ({
+      hotelName: offer.hotel.name,
+      address: offer.hotel.address.lines.join(', '),
+      city: offer.hotel.address.cityName,
+      price: offer.offers[0]?.price.total,
+      currency: offer.offers[0]?.price.currency,
+      checkInDate: offer.offers[0]?.checkInDate,
+      checkOutDate: offer.offers[0]?.checkOutDate
+    }));
+  } catch (error) {
+    console.error('Erreur recherche hôtels:', error);
+    throw new Error(error.response?.data?.errors?.[0]?.detail || error.message);
   }
 }

@@ -23,7 +23,7 @@ export default function HotelResults() {
   useEffect(() => {
     async function fetchHotels() {
       try {
-        const { hotels: list } = await hotelService.rechercheHôtels({ city, checkInDate, checkOutDate, adults, rooms });
+        const { hotels: list } = await hotelService.rechercheHotels({ city, checkInDate, checkOutDate, adults, rooms });
         setHotels(list);
         // calcul des meilleures offres
         if (list.length) {

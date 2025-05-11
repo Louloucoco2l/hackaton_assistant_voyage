@@ -1,14 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
-import axios from 'axios';
-import querystring from 'querystring';
 import { getForecastByCity } from './services/weather.js';
 
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { searchFlights, searchAirports, getCityAirport } from './services/amadeusService.js';
+import { searchFlights, searchAirports, getCityAirport, searchHotels } from './services/amadeusService.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -164,6 +162,29 @@ app.get('/api/weather/forecast/:city', async (req, res) => {
   }
 });
 
+// 🔹 Hôtels Amadeus
+app.post('/api/hotels/search', async (req, res) => {
+  try {
+    const { city, checkInDate, checkOutDate, adults } = req.body;
+
+    const airport = await getCityAirport(city);
+    if (!airport || !airport.iataCode) {
+      return res.status(400).json({ error: `Aucun aéroport trouvé pour ${city}` });
+    }
+
+    const hotels = await searchHotels({
+      cityCode: airport.iataCode,
+      checkInDate,
+      checkOutDate,
+      adults
+    });
+
+    res.json({ hotels });
+  } catch (error) {
+    console.error('Erreur recherche hôtels:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.listen(port, () => {
   console.log(`✅ Serveur backend lancé sur http://localhost:${port}`);

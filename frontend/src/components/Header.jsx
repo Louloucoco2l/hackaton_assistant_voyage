@@ -59,7 +59,7 @@ export default function Header() {
                     className="btn btn-primary ms-lg-3 mt-2 mt-lg-0"
                     onClick={() => setIsAuthModalOpen(true)}
                   >
-                    S'inscrire
+                    Connexion
                   </button>
                 </li>
               ) : (

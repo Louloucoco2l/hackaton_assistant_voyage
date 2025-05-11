@@ -4,7 +4,7 @@
 
 ## 📋 Description
 
-TravelSmart est un assistant personnel de voyage qui aide les utilisateurs à planifier leurs voyages en fonction de leurs préférences, du budget et des conditions météorologiques. L'application utilise des API externes pour fournir des informations en temps réel sur la météo et propose des données simulées pour les vols et les hôtels.
+TravelSmart est un assistant personnel de voyage qui aide les utilisateurs à planifier leurs voyages en fonction de leurs préférences, du budget et des conditions météorologiques. L'application utilise des API externes pour fournir des informations en temps réel 
 
 ## 🏗️ Architecture
 
@@ -17,14 +17,13 @@ Le projet est structuré en deux parties principales :
 
 ### Prérequis
 - Node.js (v14 ou supérieur)
-- WAMP (pour MySQL)
-- npm ou yarn
+- npm 
 
 ### Étapes d'installation
 
 1. **Cloner le dépôt**
    ```bash
-   git clone https://github.com/votre-username/hackaton_assistant_voyage.git
+   git clone https://github.com/Louloucoco2l/hackaton_assistant_voyage.git
    cd hackaton_assistant_voyage
    ```
 
@@ -39,30 +38,14 @@ Le projet est structuré en deux parties principales :
    cd ../frontend
    npm install
    ```
-
-4. **Configurer les variables d'environnement**
    
-   Créer un fichier `.env` dans le dossier `backend` :
-   ```
-   PORT=5000
-   OPENWEATHER_API_KEY=votre_clé_openweather
-   SKYSCANNER_API_KEY=votre_clé_skyscanner
-   BOOKING_API_KEY=votre_clé_booking
-   FIREBASE_API_KEY=votre_clé_firebase
-   ```
-
-5. **Configurer la base de données**
-   - Démarrer WAMP
-   - Accéder à phpMyAdmin (généralement http://localhost/phpmyadmin)
-   - Créer une base de données nommée `travelsmart`
-   - Importer le fichier SQL fourni dans `backend/database/travelsmart.sql` (si disponible)
-
+4. **Les fichiers .env sont inclus dans le dépôt, rien a faire à ce sujet**
 ## 🖥️ Démarrage
 
 1. **Démarrer le serveur backend**
    ```bash
    cd backend
-   node server.js
+   node server.js ou npm run dev
    ```
    Le serveur sera accessible à l'adresse : http://localhost:5000
 
@@ -73,116 +56,63 @@ Le projet est structuré en deux parties principales :
    ```
    L'application sera accessible à l'adresse : http://localhost:5173
 
-## 🌐 API Endpoints
-
-### Météo
-- `GET /api/weather?city=Paris` - Obtenir les données météo pour une ville
-
-### Vols (données simulées)
-- `GET /api/flights` - Obtenir la liste des vols disponibles
-- `GET /api/flights?departure=Paris&destination=Rome` - Filtrer les vols par départ et destination
-
-### Hôtels (données simulées)
-- `GET /api/hotels` - Obtenir la liste des hôtels disponibles
-- `GET /api/hotels?city=Paris` - Filtrer les hôtels par ville
-
-### Destinations
-- `GET /api/destinations` - Obtenir la liste des destinations populaires
 
 ## 📁 Structure du Projet
 ```
 hackaton_assistant_voyage/
 ├── backend/
-│   ├── controllers/
-│   │   ├── UserController.js
-│   ├── middleware/
-│   │   ├── auth.js
-│   ├── node_modules/
-│   ├── public/
-│   │   ├── images/
-│   │   └── javascripts/
-│   ├── routes/
-│   │   ├── index.js
-│   │   └── users.js
 │   ├── services/
-│   │   ├── weather.js
+│   │   ├── amadeusService.js
+│   │   ├── bookingService.js
 │   │   ├── db.js
-│   │   └── firebase.js
-│   ├── .env
+│   │   ├── firebase.js
+│   │   └── weather.js
+│   ├── node_modules/
 │   ├── package.json
+│   ├── package-lock.json
+│   ├── test-env.js
 │   └── server.js
 ├── frontend/
 │   ├── node_modules/
-│   ├── public/
+│   ├── index.html
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── AboutSection.jsx
 │   │   │   ├── Accueil.jsx
 │   │   │   ├── AuthModal.jsx
-│   │   │   ├── BudgetCalculator.jsx
+│   │   │   ├── ChatAssistant.jsx
 │   │   │   ├── DestinationCard.jsx
 │   │   │   ├── DestinationCardList.jsx
-│   │   │   ├── ErrorBoundary.jsx
-│   │   │   ├── FlightSearch.jsx
+│   │   │   ├── FloatingChatBot.jsx
 │   │   │   ├── Footer.jsx
 │   │   │   ├── Header.jsx
 │   │   │   ├── HotelSearch.jsx
+│   │   │   ├── LoadingSpinner.jsx
 │   │   │   ├── PlannerSection.jsx
+│   │   │   └── TravelTipsCard.jsx
 │   │   │   └── WeatherWidget.jsx
 │   │   ├── context/
-│   │   │   ├── DestinationContext.jsx
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── TravelContext.jsx
 │   │   ├── pages/
-│   │   │   ├── Auth.jsx
-│   │   │   └── Search.jsx
+│   │   │   ├── FlightDetails.jsx
+│   │   │   ├── FlightResults.jsx
+│   │   │   └── HotelResults.jsx
 │   │   ├── services/
 │   │   │   ├── api.js
-│   │   │   ├── auth.jsx
-│   │   │   └── firebase.jsx
+│   │   │   ├── firebase.js
+│   │   │   └── hotelService.js
 │   │   ├── styles/
 │   │   │   ├── App.css
-│   │   │   ├── Destinationcards.css
-│   │   │   ├── index.css
-│   │   │   ├── style.css
-│   │   │   └── WeatherWidget.css
+│   │   │   └── index.css
 │   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── .env
+│   │   └── Main.jsx
 │   ├── package.json
+│   ├── package-lock.json
 │   └── vite.config.js
 └── .gitignore
+
 ```
-backend/package-lock.json
-backend/package.json
-backend/server.js
-backend/services/amadeusService.js
-backend/services/db.js
-backend/services/firebase.js
-backend/services/weather.js
-backend/structure_projet.txt
-frontend/index.html
-frontend/package-lock.json
-frontend/package.json
-frontend/src/App.jsx
-frontend/src/components/AboutSection.jsx
-frontend/src/components/Accueil.jsx
-frontend/src/components/AuthModal.jsx
-frontend/src/components/ChatAssistant.jsx
-frontend/src/components/DestinationCard.jsx
-frontend/src/components/DestinationCardList.jsx
-frontend/src/components/FloatingChatBot.jsx
-frontend/src/components/Footer.jsx
-frontend/src/components/Header.jsx
-frontend/src/components/HotelSearch.jsx
-frontend/src/components/PlannerSection.jsx
-frontend/src/components/TravelTipsCard.jsx
-frontend/src/components/WeatherWidget.jsx
-frontend/src/context/TravelContext.jsx
-frontend/src/Main.jsx
-frontend/src/pages/FlightResults.jsx
-frontend/src/services/api.js
-frontend/src/styles/App.css
-frontend/src/styles/index.css
-frontend/vite.config.js
 
 ## 🔧 Technologies Utilisées
 
@@ -193,16 +123,16 @@ frontend/vite.config.js
 - Axios
 
 ### Backend
-- Node.js avec ES modules
+- Node.js
 - Express
-- MySQL2
 - Dotenv
 - Cors
 
 ### API Externes
 - OpenWeather API
 - amadeus pour les vols et hôtels
-- firebase (pas encore implemente)
+- firebase 
+- OpenRouter (ChatGPT)
 
 ## 🧪 Tests
 
@@ -221,17 +151,11 @@ npm test
 ## 📝 Fonctionnalités
 
 - Affichage des conditions météorologiques pour différentes destinations
-- Recherche de vols (simulée)
-- Recherche d'hôtels (simulée)
+- Recherche de vols 
+- Recherche d'hôtels
+- Discussion avec une IA
+- Inscription et connexion avec Firebase
 - Interface utilisateur intuitive et responsive
 - Sélection de destinations populaires
-
-## 🔜 Prochaines Étapes
-
-- Intégration d'API réelles pour les vols et hôtels
-- Système d'authentification utilisateur
-- Fonctionnalités de réservation
-- Optimisation mobile
-- Tests automatisés
 
 
